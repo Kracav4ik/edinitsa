@@ -43,23 +43,49 @@ namespace Card {
         NINE,
     };
 
+    struct _Empty{};
+
     struct NumberData {
-        Category category: 2; // must be NUMBER
-        Color color: 2;
-        Number number: 4;
+        union {
+            struct {
+                Category category: 2; // must be NUMBER
+                Color color: 2;
+                Number number: 4;
+            };
+            _Empty __empty;
+        };
+
+        constexpr NumberData() : __empty() {}
+        constexpr NumberData(Color color, Number number) : category(NUMBER), color(color), number(number) {}
     };
 
     struct SpecialData {
-        Category category: 2; // must be SPECIAL
-        Color color: 2;
-        SpecialType type: 2;
-        uint8_t reserved: 2;
+        union {
+            struct {
+                Category category: 2; // must be SPECIAL
+                Color color: 2;
+                SpecialType type: 2;
+                uint8_t reserved: 2;
+            };
+            _Empty __empty;
+        };
+
+        constexpr SpecialData() : __empty() {}
+        constexpr SpecialData(Color color, SpecialType type) : category(SPECIAL), color(color), type(type) {}
     };
 
     struct ColorlessData {
-        Category category: 2; // must be COLORLESS
-        ColorlessType type: 1;
-        uint8_t reserved: 5;
+        union {
+            struct {
+                Category category: 2; // must be COLORLESS
+                ColorlessType type: 1;
+                uint8_t reserved: 5;
+            };
+            _Empty __empty;
+        };
+
+        constexpr ColorlessData() : __empty() {}
+        explicit constexpr ColorlessData(ColorlessType type) : category(COLORLESS), type(type) {}
     };
 
     struct Data {
@@ -72,11 +98,24 @@ namespace Card {
             SpecialData asSpecial;
             ColorlessData asColorless;
             uint8_t asByte;
+            _Empty __empty;
         };
 
         bool isNumber() const { return category == NUMBER; }
         bool isSpecial() const { return category == SPECIAL; }
         bool isColorless() const { return category == COLORLESS; }
+
+        constexpr Data() : __empty() {}
+        constexpr Data(uint8_t byte) : asByte(byte) {}
+        constexpr Data(NumberData number) : asNumber(number) {}
+        constexpr Data(SpecialData special) : asSpecial(special) {}
+        constexpr Data(ColorlessData colorless) : asColorless(colorless) {}
     };
     static_assert(sizeof(Data) == 1, "Data class should be exactly one byte. Lots of blood was spilled for it.");
+
+    static const Data ALL_CARDS[] = {
+            NumberData(RED, ZERO),
+            SpecialData(RED, SKIP),
+            ColorlessData(PLUS_4),
+    };
 }
