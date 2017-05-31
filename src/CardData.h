@@ -5,6 +5,41 @@
 // fuck you GCC and your fucking 'enum is too big for bitfield' warning
 #pragma GCC system_header
 
+#define COLORS_APPLY(MACRO, ...)                \
+        MACRO(RED, __VA_ARGS__)                 \
+        MACRO(GREEN, __VA_ARGS__)               \
+        MACRO(BLUE, __VA_ARGS__)                \
+        MACRO(YELLOW, __VA_ARGS__)
+
+#define SPECIALS_APPLY(MACRO, ...)              \
+        MACRO(SKIP, __VA_ARGS__)                \
+        MACRO(REVERSE, __VA_ARGS__)             \
+        MACRO(PLUS_2, __VA_ARGS__)
+
+#define COLORLESS_APPLY(MACRO, ...)             \
+        MACRO(COLOR_CHOOSE, __VA_ARGS__)        \
+        MACRO(PLUS_4, __VA_ARGS__)
+
+#define NUMBERS_APPLY(MACRO, ...)               \
+        MACRO(ZERO, __VA_ARGS__)                \
+        MACRO(ONE, __VA_ARGS__)                 \
+        MACRO(TWO, __VA_ARGS__)                 \
+        MACRO(THREE, __VA_ARGS__)               \
+        MACRO(FOUR, __VA_ARGS__)                \
+        MACRO(FIVE, __VA_ARGS__)                \
+        MACRO(SIX, __VA_ARGS__)                 \
+        MACRO(SEVEN, __VA_ARGS__)               \
+        MACRO(EIGHT, __VA_ARGS__)               \
+        MACRO(NINE, __VA_ARGS__)
+
+#define ENUM_DECL(name, ...) name,
+
+#define NUMBERS_DECL(color, number, ...) NumberData(color, number),
+#define SPECIALS_DECL(color, type, ...) SpecialData(color, type),
+#define COLORLESS_DECL(type, ...) ColorlessData(type),
+
+#define FOR_VALUE(value, MACRO, ...) MACRO(__VA_ARGS__, value)
+
 namespace Card {
     enum Category : uint8_t {
         NUMBER,
@@ -13,34 +48,19 @@ namespace Card {
     };
 
     enum Color : uint8_t {
-        RED,
-        GREEN,
-        BLUE,
-        YELLOW,
+        COLORS_APPLY(ENUM_DECL)
     };
 
     enum SpecialType : uint8_t {
-        SKIP,
-        REVERSE,
-        PLUS_2,
+        SPECIALS_APPLY(ENUM_DECL)
     };
 
     enum ColorlessType : uint8_t {
-        COLOR_CHOOSE,
-        PLUS_4,
+        COLORLESS_APPLY(ENUM_DECL)
     };
 
     enum Number : uint8_t {
-        ZERO,
-        ONE,
-        TWO,
-        THREE,
-        FOUR,
-        FIVE,
-        SIX,
-        SEVEN,
-        EIGHT,
-        NINE,
+        NUMBERS_APPLY(ENUM_DECL)
     };
 
     struct _Empty{};
@@ -114,61 +134,20 @@ namespace Card {
     static_assert(sizeof(Data) == 1, "Data class should be exactly one byte. Lots of blood was spilled for it.");
 
     static const Data ALL_CARDS[] = {
-            NumberData(RED, ZERO),
-            NumberData(RED, ONE),
-            NumberData(RED, TWO),
-            NumberData(RED, THREE),
-            NumberData(RED, FOUR),
-            NumberData(RED, FIVE),
-            NumberData(RED, SIX),
-            NumberData(RED, SEVEN),
-            NumberData(RED, EIGHT),
-            NumberData(RED, NINE),
-            NumberData(GREEN, ZERO),
-            NumberData(GREEN, ONE),
-            NumberData(GREEN, TWO),
-            NumberData(GREEN, THREE),
-            NumberData(GREEN, FOUR),
-            NumberData(GREEN, FIVE),
-            NumberData(GREEN, SIX),
-            NumberData(GREEN, SEVEN),
-            NumberData(GREEN, EIGHT),
-            NumberData(GREEN, NINE),
-            NumberData(BLUE, ZERO),
-            NumberData(BLUE, ONE),
-            NumberData(BLUE, TWO),
-            NumberData(BLUE, THREE),
-            NumberData(BLUE, FOUR),
-            NumberData(BLUE, FIVE),
-            NumberData(BLUE, SIX),
-            NumberData(BLUE, SEVEN),
-            NumberData(BLUE, EIGHT),
-            NumberData(BLUE, NINE),
-            NumberData(YELLOW, ZERO),
-            NumberData(YELLOW, ONE),
-            NumberData(YELLOW, TWO),
-            NumberData(YELLOW, THREE),
-            NumberData(YELLOW, FOUR),
-            NumberData(YELLOW, FIVE),
-            NumberData(YELLOW, SIX),
-            NumberData(YELLOW, SEVEN),
-            NumberData(YELLOW, EIGHT),
-            NumberData(YELLOW, NINE),
+            NUMBERS_APPLY(FOR_VALUE, COLORS_APPLY, NUMBERS_DECL)
 
-            SpecialData(RED, SKIP),
-            SpecialData(RED, REVERSE),
-            SpecialData(RED, PLUS_2),
-            SpecialData(GREEN, SKIP),
-            SpecialData(GREEN, REVERSE),
-            SpecialData(GREEN, PLUS_2),
-            SpecialData(BLUE, SKIP),
-            SpecialData(BLUE, REVERSE),
-            SpecialData(BLUE, PLUS_2),
-            SpecialData(YELLOW, SKIP),
-            SpecialData(YELLOW, REVERSE),
-            SpecialData(YELLOW, PLUS_2),
+            SPECIALS_APPLY(FOR_VALUE, COLORS_APPLY, SPECIALS_DECL)
 
-            ColorlessData(COLOR_CHOOSE),
-            ColorlessData(PLUS_4),
+            COLORLESS_APPLY(COLORLESS_DECL)
     };
 }
+
+#undef COLORS_APPLY
+#undef SPECIALS_APPLY
+#undef COLORLESS_APPLY
+#undef NUMBERS_APPLY
+#undef ENUM_DECL
+#undef NUMBERS_DECL
+#undef SPECIALS_DECL
+#undef COLORLESS_DECL
+#undef FOR_VALUE
