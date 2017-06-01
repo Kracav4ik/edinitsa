@@ -140,6 +140,7 @@ namespace Card {
 
             COLORLESS_APPLY(COLORLESS_DECL)
     };
+    static const int ALL_CARDS_COUNT = sizeof(ALL_CARDS) / sizeof(ALL_CARDS[0]);
 }
 
 #undef COLORS_APPLY
