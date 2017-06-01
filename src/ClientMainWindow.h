@@ -7,15 +7,14 @@
 #include "ui_edinitsa.h"
 #include "transport.h"
 
-class ColorChooserWidget;
-class ToolSelectorWidget;
-class LayersWidget;
+class HandWidget;
 
 class ClientMainWindow : public QMainWindow, private Ui::ClientMainWindow {
 Q_OBJECT
 private:
     QTcpSocket* client;
     MessageReader reader;
+    HandWidget* handWidget;
     bool isConnected();
 
     template<typename MsgClass, typename... ArgTypes>
@@ -30,8 +29,9 @@ public slots:
     void on_socket_error(QAbstractSocket::SocketError error);
     void on_socket_stateChanged(QAbstractSocket::SocketState state);
 
-    void on_canvas_debugInfo(int linesCount, int paintTime);
     void on_buttonSend_clicked();
     void on_buttonConnect_clicked();
+
+    void on_hand_placeCardClicked(uint32_t cardUid);
 };
 

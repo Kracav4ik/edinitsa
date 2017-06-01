@@ -7,6 +7,7 @@ sys_includes = [
 includes = [
     'enums.h',
     'transport.h',
+    'CardData.h',
 ]
 
 
@@ -271,10 +272,14 @@ struct %(cls)s : MessageBase{%(decl_field)s
             'decode': decode_body,
         })
 
+tcarddata = StructType('Card::Data', [Field(tuint8, 'asByte', False)])
 
 msg_classes = [
     MsgClass('StringMessage', [Field(tstring, 'str')]),
     MsgClass('SetClientNameMessage', [Field(tstring, 'name')]),
+    MsgClass('PlaceCardMessage', [Field(tuint32, 'uid')]),
+    MsgClass('CardPlacedMessage', [Field(tuint32, 'uid'), Field(tcarddata, 'card')]),
+    MsgClass('CardAddedMessage', [Field(tuint32, 'uid'), Field(tcarddata, 'card')]),
 ]
 
 

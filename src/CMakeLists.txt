@@ -25,8 +25,13 @@ set(CLIENT_SOURCES
         edinitsa.ui
         ClientMainWindow.cpp
         ClientMainWindow.h
-        widgets/CanvasWidget.cpp
-        widgets/CanvasWidget.h
+        CardData.h
+        widgets/CardWidget.cpp
+        widgets/CardWidget.h
+        widgets/card.ui
+        widgets/HandWidget.cpp
+        widgets/HandWidget.h
+        widgets/hand.ui
         )
 
 set(SERVER_SOURCES
